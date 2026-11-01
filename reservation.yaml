@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reservation-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      role: reservation
+  template:
+    metadata:
+      labels:
+        role: reservation
+    spec:
+      containers:
+      - name: reservation
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reservation-service
+spec:
+  type: NodePort
+  selector:
+    role: reservation
+  ports:
+  - port: 80          # Service's internal cluster port
+    targetPort: 80     # Container port it forwards to
+    nodePort: 30099    # External port on each node
